@@ -1,0 +1,17 @@
+---
+name: CI
+
+on:
+  push:
+  workflow_dispatch:
+
+
+jobs:
+  demo:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Demo
+        run: echo "Done"

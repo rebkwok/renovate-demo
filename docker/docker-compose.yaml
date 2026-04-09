@@ -1,0 +1,84 @@
+# note: we do not run prod service with docker-compose, we use it just for
+# configuring the production build
+# Environment variables:
+# For dev services, env variables are set using the --env-file arg in the justfile
+# For test, variables defined in pyproject.toml are used , so local and docker test
+# runs use the same test env vars
+# For prod, env vars are set manually in the dokku apps
+
+services:
+  prod:
+    # image name, both locally and public
+    image: bennettbot
+    build:
+      context: ..
+      # path relative to context
+      dockerfile: docker/Dockerfile
+      # the prod stage in the Dockerfile
+      target: bennettbot-prod
+      # should speed up the build in CI, where we have a cold cache
+      cache_from:  # should speed up the build in CI, where we have a cold cache
+        - ghcr.io/opensafely-core/base-docker
+        - ghcr.io/bennettoxford/bennettbot
+      args:
+        # this makes the image work for later cache_from: usage
+        - BUILDKIT_INLINE_CACHE=1
+        # env vars supplied by just
+        - BUILD_DATE
+        - GITREF
+        # env vars from .env
+        - UBUNTU_VERSION
+        - UV_VERSION
+    # this compose file is only used for production-like testing - so we
+    # don't worry about potentially leaking dummy env vars into actual prod
+    env_file:
+      - ../.env
+    # use dockers builitin PID daemon
+    init: true
+
+  # main development service
+  dev:
+    extends:
+      service: prod
+    image: bennettbot-dev
+    container_name: bennettbot-dev
+    build:
+      # the dev stage in the Dockerfile
+      target: bennettbot-dev
+      args:
+        # user developer uid:gid in dev
+        - USERID=${DEV_USERID:-1000}
+        - GROUPID=${DEV_GROUPID:-1000}
+    # paths relative to docker-compose.yaml file
+    env_file:
+      - ../.env
+      - .dev_env
+    volumes:
+      - ..:/app
+
+  dev_bot:
+    extends:
+      service: dev
+    container_name: bennettbot-bot
+    command: python -m bennettbot.bot
+
+  dev_dispatcher:
+    extends:
+      service: dev
+    container_name: bennettbot-dispatcher
+    command: python -m bennettbot.dispatcher
+
+  dev_webserver:
+    extends:
+      service: dev
+    container_name: bennettbot-webserver
+    command: gunicorn --config /app/gunicorn/conf.py bennettbot.webserver:app
+    # host:container ports: container port should match the port in WEBHOOK_ORIGIN
+    ports:
+      - "1234:1234"
+
+  test:
+    extends:
+      service: dev
+    container_name: bennettbot-test
+    command: pytest
