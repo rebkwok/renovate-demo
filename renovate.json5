@@ -114,6 +114,11 @@
       "minimumReleaseAge": "7 days",
     },
     {
+      "matchManagers": ["pep621"],
+      "matchDepNames": ["Django"],
+      "allowedVersions": "<6.0"
+    },
+    {
       "matchManagers": ["github-actions"],
       "groupName": "GitHub Actions",
       "addLabels": ["actions"],
