@@ -3,125 +3,12 @@ name = "bennettbot"
 version = "0.0.1"
 description = "Our pet slackbot"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11,<3.12"
 dependencies = [
   # Main prod requirements
-  "environs<=14.6.0",
-  "fab-classic<=1.20.2",
-  "flask<=3.1.3",
-  "gunicorn<=25.1.0",
-  "requests<=2.32.5",
-  "slack_bolt<=1.27.0",
-  "structlog<=25.5.0",
-  # for op commands
-  "django-dotenv<=1.4.2",
-  # for commands that read from Google Sheets
-  "google-api-python-client<=2.191.0",
-  "pyparsing<=3.3.2",
+  "django<=5.2.12"
 ]
-
-[tool.coverage.run]
-branch = true
-dynamic_context = "test_function"
-omit = [
-    ".venv/*",
-    "venv/*",
-    "scripts/*",
-    "fabfile.py",
-    "*/__main__.py",
-    "workspace/test/jobs.py",
-    "tests/workspace/test/jobs.py"
-]
-
-[tool.coverage.report]
-fail_under = 100
-skip_covered = true
-show_missing = true
-exclude_lines = [
-  "if __name__ == .__main__.:",
-  "assert False",
-  "pragma: no cover"
-]
-
-[tool.coverage.html]
-show_contexts = true
-
-[tool.pytest.ini_options]
-env = [
-    "DB_PATH=tests/bennettbot.db",
-    "WORKSPACE_DIR=tests/workspace",
-    "WRITEABLE_WORKSPACE_DIR=tests/writeable_workspace",
-    "WRITEABLE_DIR=tests/",
-    "LOGS_DIR=tests/logs",
-    "HOST_LOGS_DIR=tests/logs",
-    "SLACK_LOGS_CHANNEL=logs",
-    "SLACK_BENNETT_ADMINS_CHANNEL=bennettadmins",
-    "SLACK_TECH_SUPPORT_CHANNEL=techsupport",
-    "SLACK_SIGNING_SECRET=secret",
-    "SLACK_BOT_TOKEN=xoxb-token",
-    "SLACK_BOT_USER_TOKEN=xoxp-token",
-    "SLACK_APP_TOKEN=xapp-token",
-    "SLACK_APP_USERNAME=test_username",
-    "GITHUB_WEBHOOK_SECRET=github_webhook_secret",
-    "WEBHOOK_ORIGIN=http://localhost:9999",
-    "GCP_CREDENTIALS_PATH=",
-    "DATA_TEAM_GITHUB_API_TOKEN=dummy-token"
-]
-filterwarnings = [
-    "error",
-    "ignore:distutils Version classes are deprecated:DeprecationWarning:pytest_freezegun",
-    # Ignore unclosed socket warnings from mocket library (third-party issue)
-    "ignore:Exception ignored in.*<socket.socket:pytest.PytestUnraisableExceptionWarning",
-]
-
-[tool.ruff]
-line-length = 88
-exclude = [
-  ".direnv",
-  ".git",
-  ".github",
-  ".ipynb_checkpoints",
-  ".pytest_cache",
-  ".venv",
-  "__pycache__",
-  "docker",
-  "htmlcov",
-  "venv",
-  "fabfile.py",
-]
-
-[tool.ruff.lint]
-extend-select = [
-  "A",  # flake8-builtins
-  "I",  # isort
-  "INP",  # flake8-no-pep420
-  "ISC",  # flake8-implicit-str-concat
-  "UP",  # pyupgrade
-  "W",  # pycodestyle warning
-]
-extend-ignore = [
-  "E501",
-  "E731",
-]
-
-[tool.ruff.lint.isort]
-lines-after-imports = 2
-
-[tool.ruff.lint.per-file-ignores]
-"gunicorn/conf.py" = ["INP001"]
-
-# Note: any `exclude-newer-package` timestamps should be removed if > 7 days old
-# See https://github.com/opensafely-core/repo-template/blob/main/DEVELOPERS.md for details
-[tool.uv]
-required-version = ">=0.9"
 
 [dependency-groups]
 dev = [
-  "ruff<=0.15.4",
-  "pre-commit<=4.5.1",
-  "pytest<=9.0.2",
-  "pytest-cov<=7.0.0",
-  "pytest-env<=1.5.0",
-  "pytest-freezer<=0.4.9",
-  "mocket<=3.14.1",
 ]
