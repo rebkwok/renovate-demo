@@ -6,8 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11,<3.12"
 dependencies = [
   # Main prod requirements
-  "Django<=5.2.13; python_version < '3.12'",
-  "Django<=6.04; python_version >= '3.12'",
+  "Django==5.2.13",
 ]
 
 [dependency-groups]
